@@ -4,27 +4,27 @@ Contains the files (HTML, CSS, JavaScript) that I've created for my Senior Proje
 
 ## Componenets
 ### HTML
-<div> player </div>
-<div> navigation bar </div>
-<div> drag and drop area </div>
+* <div> player </div>
+* <div> navigation bar </div>
+* <div> drag and drop area </div>
 
 ### CSS
-Styling for:
-Level Up
-Player
-Navigation Bar
-Drag and Drop Items and Area
+* Styling for:
+  * Level Up
+  * Player
+  * Navigation Bar
+  * Drag and Drop Items and Area
 
 ### JavaScript
-Functions for:
-Starting question
-Next question function and button
-Level up
-Wall creation
-Reset
-Play function and button
-Drag and drop functions
-Translation
-Player movements
-Validation (for reaching goal and for hitting  walls)
+* Functions for:
+  * Starting question
+  * Next question function and button
+  * Level up
+  * Wall creation
+  * Reset
+  * Play function and button
+  * Drag and drop functions
+  * Translation
+  * Player movements
+  * Validation (for reaching goal and for hitting  walls)
 
