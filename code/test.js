@@ -15,9 +15,10 @@ function startQuestion() {
     xQ = 50;
     yQ = 50;
     setTranslate(xQ, yQ, goalBox);
-    if(level <= 1) {
-        document.getElementById("forLoop").style.visibility = "hidden";
-    }
+    setTranslateD(0,0, dotPlayer);
+//    if(level <= 1) {
+//        document.getElementById("forLoop").style.visibility = "hidden";
+//    }
 }
 
 var nextButton = document.querySelector("#next");
@@ -34,15 +35,15 @@ function nextQuestion() {
     setTranslate(xQ, yQ, goalBox);
     questionCounter++;
     
-    document.getElementById("test1").innerHTML = level + " " + questionCounter + " " + reachGoal;
+    //document.getElementById("test1").innerHTML = level + " " + questionCounter + " " + reachGoal;
     
-    if(level >= 1) {
+    if(level > 1) {
         document.getElementById("levelup").style.visibility = "visible";
         document.getElementById("forLoop").style.visibility = "visible";
     }
     
     numWalls = Math.floor(Math.random()*15);
-    if(level > 2) {
+    if(level > 0) {
         w.style.visibility = "visible";
         
         while(w.lastElementChild) {
@@ -52,9 +53,9 @@ function nextQuestion() {
         for(var i = 0; i < numWalls; i++)
             createWalls();
     }
-    document.getElementById("test2").innerHTML = document.getElementById("forLoop").style.visibility;
+    //document.getElementById("test2").innerHTML = document.getElementById("forLoop").style.visibility;
     
-    if(questionCounter >= 3  && reachGoal >= 1) {
+    if(questionCounter >= 3  && reachGoal >= 3) {
         levelUp();
     }
     
@@ -82,7 +83,7 @@ function createWalls() {
 
     yW = Math.floor(Math.random()*5);
     yW = yW * 50;
-    setTranslate(xW, yW, wallCln);
+    setTranslateD(xW, yW, wallCln);
 }
 
 /* RESET */
@@ -103,7 +104,7 @@ function reset() {
     listTranslation = [];
     dotPlayer.offsetLeft = 0;
     dotPlayer.offsetTop = 0;
-    setTranslate(0,0, dotPlayer);
+    setTranslateD(0,0, dotPlayer);
     xDotLoc = 0;
     yDotLoc = 0;
     goalBox.style.background = "white";
@@ -207,20 +208,24 @@ function drag(e) {
     xOffset = endX;
     yOffset = endY;
 
-    setTranslate(endX, endY, dragItem);
+    setTranslateD(endX, endY, dragItem);
   }
 }
 
-function setTranslate(xPos, yPos, el) {
+function setTranslateD(xPos, yPos, el) {
   el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+}
+
+function setTranslate(xPos, yPos, el) {
+  el.style.transform = "translate3d(" + (xDotLoc+=xPos) + "px, " + (yDotLoc+=yPos) + "px, 0)";
   if(el.id == "dotMove") {
-      checkAns(goalBox.offsetLeft + xQ, goalBox.offsetTop + yQ, dotPlayer.offsetLeft + xPos,  dotPlayer.offsetTop + yPos);
+      checkAns(goalBox.offsetLeft + xQ, goalBox.offsetTop + yQ, dotPlayer.offsetLeft + xDotLoc,  dotPlayer.offsetTop + yDotLoc);
       
-      if(level > 2) {
+      if(level > 0) {
       var nodes = w.childNodes;
       nodes[0] = document.getElementById("wall");
        for(var i=0; i<nodes.length; i++) {
-            if(checkWalls(nodes[i].offsetLeft + xW, nodes[i].offsetTop + yW, dotPlayer.offsetLeft + xPos,  dotPlayer.offsetTop + yPos, i))
+            if(checkWalls(nodes[i].offsetLeft + xW, nodes[i].offsetTop + yW, dotPlayer.offsetLeft + xDotLoc,  dotPlayer.offsetTop + yDotLoc, i))
                 break;
         }
       }
@@ -246,6 +251,9 @@ function movePlayer () {
     elem.hidden = false;
     var safezone = false;
     var forActive = false;
+    var x = 0;
+    var y = 0;
+    var startLoop = 1;
     
     if(classElem == "square")  {
         var a = document.elementFromPoint(event.clientX, event.clientY).innerHTML;
@@ -273,6 +281,7 @@ function movePlayer () {
     if(forActive) {
         loops = parseInt(n);
         forActive = false;
+        startLoop = loops;
     }
     
     while(elem.lastChild && !safezone) {
@@ -282,41 +291,49 @@ function movePlayer () {
 
     
         if(a.search("moveRight()") > -1 && safezone) {
-            xDotLoc += 50;
+            x = 50;
+            y = 0;
         }
 
         if(a.search("moveLeft()") > -1 && safezone) {
-            xDotLoc -= 50;
+            x = -50;
+            y = 0;
         }
 
         if(a.search("moveUp()") > -1 && safezone) {
-            yDotLoc -= 50;
+            x = 0;
+            y = -50;
         }
 
         if(a.search("moveDown()") > -1 && safezone) {
-            yDotLoc += 50;
+            x = 0;
+            y = 50;
         }
+        //document.getElementById("test1").innerHTML = loops;
+    
         
-        if(loops > 1) {
-            forOrder.push([xDotLoc, yDotLoc, dotPlayer]);
-            document.getElementById("test3").innerHTML = "Placed in forLoop " + listTranslation.length;
-            for(var l = 1; l <= loops; l++)
+        if(startLoop > 1) {
+            forOrder.push([x, y, dotPlayer]);
+            //document.getElementById("test3").innerHTML = "Placed in forLoop " + forOrder.length;
+            for(var l = 1; l <= startLoop; l++)
                 listTranslation.push(null);
             
-            addOrder = false;
+            //addOrder = false;
         }
     
         while(loops > 0) {
-            if(loops == 1) {
-                listTranslation.push([xDotLoc, yDotLoc, dotPlayer]);
-                document.getElementById("test3").innerHTML = "Placed in list " + listTranslation.length;
+            if(startLoop == 1) {
+                listTranslation.push([x, y, dotPlayer]);
+                //document.getElementById("test3").innerHTML = "Placed in list " + listTranslation.length;
             }
             else {
                 var index = listTranslation.indexOf(null);
-                document.getElementById("test2").innerHTML = index;
+                //document.getElementById("test2").innerHTML = index;
 
-                for(var o = 0; o < forOrder.length; o++) {
+                for(var o = 0; o < startLoop; o+=startLoop) {
+                    //document.getElementById("test2").innerHTML = index;
                     listTranslation[index] = forOrder[o];
+                    index+=startLoop;
                 }
             } 
             
@@ -328,9 +345,9 @@ function movePlayer () {
         forOrder = [];
     }
 }
-
 /* VALIDATION */
 function checkAns(gLeft, gTop, xPos, yPos) {
+    //document.getElementById("test3").innerHTML = gLeft + " : " + xPos + " " + gTop + " " + yPos;
     if(gTop == yPos && gLeft == xPos) {
         goalBox.style.background = "green";
         reachGoal++;
@@ -342,8 +359,8 @@ function checkWalls(wLeft, wTop, xPos, yPos, i) {
         wLeft = 75;
         wTop = 0;
     }
-    document.getElementById("test3").innerHTML = i + " : " + wLeft + " " + wTop + " " + xPos + " " + yPos;
-    if(wTop <= yPos + 50 && wTop >= yPos-8  && wLeft <= xPos + 50 && wLeft >= xPos ) {
+    //document.getElementById("test3").innerHTML = i + " : " + wLeft + " " + wTop + " " + xPos + " " + yPos;
+    if( yPos <= (wTop + 50) && yPos >= wTop  && xPos <= wLeft && xPos >= (wLeft-25) ) {
         goalBox.style.background = "red";
         return true;
     }
